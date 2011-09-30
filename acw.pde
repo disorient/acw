@@ -5,40 +5,54 @@ import java.lang.reflect.Method;
 import hypermedia.net.*;
 import java.io.*;
 
+public class OnlyExtension implements FilenameFilter { 
+  String ext; 
+  public OnlyExtension(String ext) { 
+    this.ext = "." + ext; 
+  } 
+  
+  public boolean accept(File dir, String name) { 
+    return name.endsWith(ext); 
+  } 
+}
+
 int WIDTH = 16;
 int HEIGHT = 16;
 boolean VERTICAL = false;
 int FONT_SIZE = HEIGHT;
 int FRAMERATE = 30;
-String hostname = "127.0.0.1"; //"192.168.1.130";
-int TYPICAL_MODE_TIME = 30;
-boolean USE_GSMOVIE = true;
+String hostname = "localhost"; // "192.168.1.130";
+int TYPICAL_MODE_TIME = 45;
+boolean USE_GSMOVIE = false;
 
 String[] enabledModes = new String[] {
-  //    "drawGreetz",
-  //    "drawBursts",
-  //    "drawFlash",
+      "drawGreetz",
+ //     "drawBursts",
+ //     "drawFlash",
   //    "drawLines",
   //    "drawFader",
   //    "drawCurtain",
   //    "drawVertLine",
   //    "drawSticks",
-  //    "drawLinesTheOtherWay",
+ //     "drawLinesTheOtherWay",
   //    "drawSpin",
-      "drawAnimation",
-  //    "drawWaves",
- // "drawMovie"
+  //    "drawAnimation",
+  
+//    "drawWaves",
+   "drawMovie",
  //      "drawStarField"
  //        "drawTargetScanner"
 };
 
 String messages[] = new String[] {
-  "DISORIENT", 
+  "DiSORienT", 
+  "PORnJ STaR III",
+  //"HELLO WORLD"
   //  "KOSTUME  KULT",
   //  "BLACK  LIGHT  BALL"
-  "COUNTRY  CLUB"
+  //"COUNTRY  CLUB"
 };  
-String message = "DISORIENT";
+String message = "DiSORienT";
 
 String[] enabledAnimations = new String[] {
   //"anim-heart"
@@ -153,7 +167,7 @@ void setMode(int newMode) {
 
   // TODO Abstract this into init methods.
   if (methodName == "drawBursts") {
-    burst_fill = boolean(int(random(1)+0.5));
+    burst_fill = true; // boolean(int(random(1)+0.5));
   }
   else if (methodName == "drawAnimation") {
     currentAnimation = int(random(animations.length));
@@ -211,7 +225,7 @@ void drawGreetz() {
   fill(255);
 
   if (w == 0) {
-    w = -int((message.length()-1) * (FONT_SIZE*1.35) + WIDTH);
+    w = -int((message.length()-1) * (FONT_SIZE*1.20) + WIDTH);
   }
 
   text(message, x, FONT_SIZE);
@@ -424,7 +438,7 @@ void drawSpin()
   else
     line(0, HEIGHT-(step-WIDTH+1)-1, WIDTH, step-WIDTH+1); 
 
-  if (frame >= (WIDTH+HEIGHT-2)*10)
+  if (frame >= (WIDTH+HEIGHT-2)*40)
     newMode();
 }
 
@@ -599,9 +613,10 @@ class Burst {
   public void draw(boolean fl)
   {
     if (fl)
-      fill(0);
+      fill(255);
     else
       noFill();
+    strokeWeight(2);
     stroke(intensity);
     ellipse(x, y, d, d);
     d+= speed;
@@ -626,8 +641,9 @@ class Animation {
 
   public void load(String name) {
     File dir = new File(savePath("data/" + name));
-    String[] list = dir.list();
-
+    FilenameFilter onlyPng = new OnlyExtension("png");
+    String[] list = dir.list(onlyPng);
+    
     frames = new PImage[list.length];
     for (int i=0; i<frames.length; i++) {
       println("Loading " + name + "/frame" + (i+1) + ".png");
@@ -708,9 +724,10 @@ class Wave {
 class MoviePlayer {
   Movie movie;
   GSMovie gsmovie;
-  long movieEndFrame;
+  int movieEndFrame;
   String[] movieList;
   PApplet parent;
+  int movieDuration;
 
   public MoviePlayer(PApplet parent) {
     this.parent = parent;
@@ -724,29 +741,58 @@ class MoviePlayer {
     if ((this.gsmovie == null && this.movie == null) || 
       (frameCount >= movieEndFrame)
     ) {
-      movieEndFrame = frameCount + int(frameRate * (10 + random(35)));
       loadRandomMovie();
+      movieEndFrame = movieDuration; // int(frameRate * (10 + random(35)));
+      println("Duration " + movieDuration);
+      println("Playing " + movieEndFrame + " frames");
+      movieEndFrame += frameCount;
     }
 
+    PImage img;
     if (USE_GSMOVIE) {
       if (gsmovie.available()) { 
         gsmovie.read();
       }
-
-      image(gsmovie, 0, 0, WIDTH, HEIGHT);
+      img = gsmovie;
     }
     else {
       if (movie.available()) { 
         movie.read();
       }
-      
-      image(movie, 0, 0, WIDTH, HEIGHT);
+      img = movie; 
     }
+    
+    PImage imgBright = new PImage(img.width, img.height);
+    for (int x = 0; x < img.width; x++) {
+      for (int y = 0; y < img.height; y++ ) {
+        // Calculate the 1D pixel location
+        int loc = x + y*img.width;
+        // Get the R,G,B values from image
+        float r = red   (img.pixels[loc]);
+        float g = green (img.pixels[loc]);
+        float b = blue  (img.pixels[loc]);
+        // Change brightness according to the mouse here
+        float adjustBrightness = 5.0;
+        r *= adjustBrightness;
+        g *= adjustBrightness;
+        b *= adjustBrightness;
+        // Constrain RGB to between 0-255
+        r = constrain(r,0,255);
+        g = constrain(g,0,255);
+        b = constrain(b,0,255);
+        // Make a new color and set pixel in the window
+        color c = color(r,g,b);
+        imgBright.pixels[loc] = c;
+      }
+    }
+    image(imgBright, 0, 0, WIDTH, HEIGHT);
+
   }
 
   public void getMovieList() {
     File dir = new File(savePath("data/movies" ));
-    movieList = dir.list();
+    FilenameFilter onlyMov = new OnlyExtension("mov");
+    movieList = dir.list(onlyMov);
   }
 
   public void loadRandomMovie() {
@@ -754,21 +800,23 @@ class MoviePlayer {
     String filename = movieList[index];
     
     println("Loading "+filename);
-    
-    if (movie != null) {
-      movie.stop();
-    }  
 
     if (USE_GSMOVIE) {
+      if (gsmovie != null)
+        gsmovie.stop();
       gsmovie = new GSMovie(this.parent, "movies/"+filename);
       gsmovie.resize(WIDTH, HEIGHT);
       gsmovie.volume(0);
       gsmovie.loop();
+      movieDuration = int(gsmovie.duration() * 30);
     }
     else {
+      if (movie != null)
+        movie.stop();      
       movie = new Movie(this.parent, "movies/"+filename);
       movie.resize(WIDTH, HEIGHT);
       movie.loop();
+      movieDuration = int(movie.duration() * 30);
     }
   }
 }
