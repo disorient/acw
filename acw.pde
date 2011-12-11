@@ -21,8 +21,8 @@ int HEIGHT = 16;
 boolean VERTICAL = false;
 int FONT_SIZE = HEIGHT;
 int FRAMERATE = 30;
-String hostname = "localhost"; // "192.168.1.130";
-int TYPICAL_MODE_TIME = 45;
+String hostname = "192.168.1.130";
+int TYPICAL_MODE_TIME = 75;
 boolean USE_GSMOVIE = false;
 
 String[] enabledModes = new String[] {
@@ -46,8 +46,8 @@ String[] enabledModes = new String[] {
 
 String messages[] = new String[] {
   "DiSORienT", 
-  "PORnJ STaR III",
-  //"HELLO WORLD"
+  "nYC*GRaTiTUDe",
+  "HeaVen On eaRTh"
   //  "KOSTUME  KULT",
   //  "BLACK  LIGHT  BALL"
   //"COUNTRY  CLUB"
