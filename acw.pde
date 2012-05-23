@@ -9,8 +9,8 @@ import java.lang.reflect.Method;
 import hypermedia.net.*;
 import java.io.*;
 
-int WIDTH = 24;
-int HEIGHT = 160;
+int WIDTH = 16;
+int HEIGHT = 16;
 boolean VERTICAL = false;
 int FRAMERATE = 30;
 String hostname = "127.0.0.1"; //"192.168.1.130";
