@@ -28,7 +28,7 @@ import hypermedia.net.*;
  *
  **/
 
-public class Dacwes {
+public class Sculpture {
   public static final int ADDRESSING_VERTICAL_NORMAL = 1;
   public static final int ADDRESSING_VERTICAL_HALF = 2;
   public static final int ADDRESSING_VERTICAL_FLIPFLOP = 3;
@@ -46,16 +46,17 @@ public class Dacwes {
   byte buffer[];
   int pixelsPerChannel;
 
-  public Dacwes(PApplet parent, int w, int h) {
+  public Sculpture(PApplet parent, int w, int h, boolean isRGB) {
     this.parent = parent;
     this.udp = new UDP(parent);
     this.address = "192.168.1.130";
     this.port = 58082;
     this.w = w;
     this.h = h;
-    int bufferSize = 3*(w*h)+1;
+    int bufferSize = (isRGB ? 3 : 1)*(w*h)+1;
     buffer = new byte[bufferSize];
     this.addressingMode = ADDRESSING_VERTICAL_NORMAL;
+    // TODO Detect this based on VERTICAL (h/2) vs. HORIZONTAL (w/2)
     this.pixelsPerChannel = 8;
     
     for (int i=0; i<bufferSize; i++) {
@@ -145,7 +146,7 @@ public class Dacwes {
     for (int y=0; y<h; y++) {
       for (int x=0; x<w; x++) {
         r = int(brightness(image.pixels[y*w+x]));
-		buffer[(getAddress(x,y)+1] = byte(r);
+	buffer[(getAddress(x,y)+1)] = byte(r);
 
         //r = int(red(image.pixels[y*w+x]));
         //g = int(green(image.pixels[y*w+x]));

@@ -18,19 +18,19 @@ int TYPICAL_MODE_TIME = 300;
 
 Routine[] enabledRoutines = new Routine[] {
   //  new Greetz(),
-  //  new Bursts(),
+//    new Bursts(),
   //  new FlashColors(),      /* rainbow */
-    new Flash(),            /* seizure mode */
-  //  new Lines(),            /* boring */
+//    new Flash(),            /* seizure mode */
+//    new Lines(),            /* boring */
   //  new OppositeLines(),    /* boring */
   //  new Waves(),            /* ? */
-    new HorizonScan(),
+//    new HorizonScan(),
   //  new RadialStars(),
   //  new NightSky(),
   //  new TargetScanner(),
-  //  new Waterfalls(),
+//    new Waterfalls(),
   //  new RGBRoutine(), 
-  //  new FFTDemo(), 
+    new FFTDemo(), 
   //  new FollowMouse()
 };
 
@@ -46,13 +46,14 @@ int direction = 1;
 int position = 0;
 Routine currentRoutine = null;
 
-Dacwes dacwes;
+Sculpture dacwes;
 
 PGraphics fadeLayer;
 int fadeOutFrames = 0;
 int fadeInFrames = 0;
 
 WiiController controller;
+boolean isRGB = false;
 
 void setup() {
   // Had to enable OPENGL for some reason new fonts don't work in JAVA2D.
@@ -60,9 +61,9 @@ void setup() {
 
   frameRate(FRAMERATE);
   
-  dacwes = new Dacwes(this, WIDTH, HEIGHT);
+  dacwes = new Sculpture(this, WIDTH, HEIGHT, false);
   dacwes.setAddress(hostname);
-  dacwes.setAddressingMode(Dacwes.ADDRESSING_HORIZONTAL_NORMAL);  
+  dacwes.setAddressingMode(Sculpture.ADDRESSING_VERTICAL_FLIPFLOP);
 
   setMode(0);  
 

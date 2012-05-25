@@ -3,7 +3,7 @@ class Bursts extends Routine {
   Burst[] bursts;
   boolean burst_fill = false;
 
-  void setup(PApplet parent, WiiController controller) {
+  void setup(PApplet parent) {
     super.setup(parent);
     bursts = new Burst[NUMBER_OF_BURSTS];
     for (int i = 0; i<NUMBER_OF_BURSTS; i++) {
