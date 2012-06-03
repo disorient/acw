@@ -10,6 +10,14 @@ class Greetz extends Routine {
   };  
   String message = "N Y C R";
 
+  public Greetz() {
+  }
+  
+  public Greetz(String[] messages) {
+    this.messages = messages;
+    this.message = messages[0];
+  }
+
   void setup(PApplet parent) {
     super.setup(parent);
     font = loadFont("Disorient-" + FONT_SIZE + ".vlw");
@@ -22,7 +30,7 @@ class Greetz extends Routine {
     fill(255);
   
     if (w == 0) {
-      w = -int((message.length()-1) * (FONT_SIZE*1.35) + WIDTH);
+      w = -int((message.length()-1) * (FONT_SIZE*1.25) + WIDTH);
     }
     
     fill(255,128,64);
@@ -46,6 +54,7 @@ class Greetz extends Routine {
       x = HEIGHT;  
       message = messages[int(random(messages.length))];
       w = 0;
+      println("Signalling newMode");
       newMode();
     }
   }
